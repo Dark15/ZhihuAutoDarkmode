@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name        熬夜刷知乎
+// @name        知乎夜间模式
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  开启知乎黑夜模式，并且跟随系统主题自动切换
+// @description  开启知乎夜间模式，并且跟随系统主题自动切换，切换后刷新网页不会出现闪白的情况
 // @author       Starry
 // @match        *://*.zhihu.com/*
 // @grant        none
