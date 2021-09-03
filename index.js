@@ -13,19 +13,21 @@
   'use strict'
   const queryString = '(prefers-color-scheme: dark)'
   const nowSysTheme = () => window.matchMedia(queryString).matches
+  let isFirst = true
   const changeTheme = isDark => {
+    let html = document.getElementsByTagName('html')[0]
     if (isDark) {
       fetch('/?theme=dark')
-      document
-        .getElementsByTagName('html')[0]
-        .setAttribute('data-theme', 'dark')
+      if (html.getAttribute('data-theme') === 'light') {
+        isFirst ? location.reload() : html.setAttribute('data-theme', 'dark')
+      }
     } else {
       fetch('/?theme=light')
-      var html = document.getElementsByTagName('html')[0]
-      html.getAttribute('data-theme')
-        ? html.setAttribute('data-theme', 'light')
-        : null
+      if (html.getAttribute('data-theme') === 'dark') {
+        isFirst ? location.reload() : html.setAttribute('data-theme', 'light')
+      }
     }
+    isFirst = false
   }
   changeTheme(nowSysTheme())
   window.matchMedia(queryString).addEventListener('change', function (e) {
