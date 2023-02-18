@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name        知乎夜间模式
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @icon         https://static.zhihu.com/heifetz/favicon.ico
+// @version      0.4
 // @description  开启知乎夜间模式，并且跟随系统主题自动切换，切换后刷新网页不会出现闪白的情况
 // @author       Dark15
 // @match        *://*.zhihu.com/*
@@ -35,20 +36,14 @@
   }
 
   function switchTheme() {
-    if (isSysDarkMode()) {
-      if (!isZhihuDarkMode()) {
-        if (isFirstLoad) {
-          setTheme('dark')
-        }
-        setRootTheme('dark')
+    const isSysDark = isSysDarkMode()
+    const isZhihuDark = isZhihuDarkMode()
+    if ((isSysDark && !isZhihuDark) || (!isSysDark && isZhihuDark)) {
+      const theme = isSysDark ? 'dark' : 'light'
+      if (isFirstLoad) {
+        setTheme(theme)
       }
-    } else {
-      if (isZhihuDarkMode()) {
-        if (isFirstLoad) {
-          setTheme('light')
-        }
-        setRootTheme('light')
-      }
+      setRootTheme(theme)
     }
     isFirstLoad = false
   }
