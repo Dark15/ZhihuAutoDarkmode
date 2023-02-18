@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        知乎夜间模式
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.3
 // @description  开启知乎夜间模式，并且跟随系统主题自动切换，切换后刷新网页不会出现闪白的情况
-// @author       Starry
+// @author       Dark15
 // @match        *://*.zhihu.com/*
 // @grant        none
 // @run-at document-end
@@ -11,26 +11,53 @@
 
 ;(function () {
   'use strict'
-  const queryString = '(prefers-color-scheme: dark)'
-  const nowSysTheme = () => window.matchMedia(queryString).matches
-  let isFirst = true
-  const changeTheme = isDark => {
-    let html = document.getElementsByTagName('html')[0]
-    if (isDark) {
-      fetch('/?theme=dark')
-      if (html.getAttribute('data-theme') === 'light') {
-        isFirst ? location.reload() : html.setAttribute('data-theme', 'dark')
+  // 是否是第一次加载
+  let isFirstLoad = true
+
+  function isSysDarkMode() {
+    // 判断系统主题是否为黑色
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+
+  function isZhihuDarkMode() {
+    // 判断知乎网站是否为夜间模式
+    return document.documentElement.getAttribute('data-theme') === 'dark'
+  }
+
+  function setTheme(theme) {
+    // 设置知乎网站的主题，需要刷新页面
+    window.location.href = window.location.href.split('?')[0] + '?theme=' + theme
+  }
+
+  function setRootTheme(theme) {
+    // 设置html根标签的data-theme属性，无需刷新页面
+    document.documentElement.setAttribute('data-theme', theme)
+  }
+
+  function switchTheme() {
+    if (isSysDarkMode()) {
+      if (!isZhihuDarkMode()) {
+        if (isFirstLoad) {
+          setTheme('dark')
+        }
+        setRootTheme('dark')
       }
     } else {
-      fetch('/?theme=light')
-      if (html.getAttribute('data-theme') === 'dark') {
-        isFirst ? location.reload() : html.setAttribute('data-theme', 'light')
+      if (isZhihuDarkMode()) {
+        if (isFirstLoad) {
+          setTheme('light')
+        }
+        setRootTheme('light')
       }
     }
-    isFirst = false
+    isFirstLoad = false
   }
-  changeTheme(nowSysTheme())
-  window.matchMedia(queryString).addEventListener('change', function (e) {
-    changeTheme(e.matches)
-  })
+
+  // 初始时切换一次主题
+  switchTheme()
+
+  // 监听系统主题变化，切换主题
+  const mql = window.matchMedia('(prefers-color-scheme: dark)')
+
+  mql.addEventListener('change', switchTheme)
 })()
