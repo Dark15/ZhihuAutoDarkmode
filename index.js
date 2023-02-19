@@ -2,7 +2,7 @@
 // @name        知乎夜间模式
 // @namespace    http://tampermonkey.net/
 // @icon         https://static.zhihu.com/heifetz/favicon.ico
-// @version      0.4
+// @version      0.5
 // @description  开启知乎夜间模式，并且跟随系统主题自动切换，切换后刷新网页不会出现闪白的情况
 // @author       Dark15
 // @match        *://*.zhihu.com/*
@@ -33,6 +33,7 @@
   function setRootTheme(theme) {
     // 设置html根标签的data-theme属性，无需刷新页面
     document.documentElement.setAttribute('data-theme', theme)
+    fetch('/?theme=' + theme)
   }
 
   function switchTheme() {
